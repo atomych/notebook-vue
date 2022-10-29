@@ -21,6 +21,7 @@
 
   main {
     flex-grow: 1;
+    padding: 10px;
   }
 }
 </style>
@@ -37,8 +38,8 @@ export default {
     AppFooter,
   },
 
-  created() {
-    this.$router.push({ name: "list" });
+  mounted() {
+    this.$router.push({ name: "write" });
   },
 };
 </script>
