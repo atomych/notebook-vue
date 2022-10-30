@@ -3,17 +3,39 @@
     <div class="logo">
       <h1>NoteBook</h1>
     </div>
-    <form class="form">
+    <form class="form" @keydown.enter.prevent="">
       <div class="form__item">
         <label for="email">Почта:</label>
         <input name="email" type="email" class="input" />
       </div>
       <div class="form__item">
         <label for="pass">Пароль:</label>
-        <input name="pass" type="password" class="input" />
+        <input
+          name="pass"
+          type="password"
+          class="input"
+          @keydown.enter.prevent="checkAuth()"
+        />
       </div>
-      <input type="submit" class="btn" value="Войти" />
+      <div class="btns">
+        <input
+          type="submit"
+          class="btn"
+          value="Войти"
+          @click.prevent="checkAuth()"
+          @keydown.enter.prevent="checkAuth()"
+        />
+        <button
+          class="btn"
+          @click.prevent="toRegPage()"
+          @keydown.enter.prevent="toRegPage()"
+        >
+          Зарегистрироваться
+        </button>
+      </div>
     </form>
+
+    <errors-list :errors="errors" />
   </section>
 </template>
 
@@ -80,24 +102,38 @@
       }
     }
 
-    .btn {
-      background-color: #fff;
-      border: 2px solid rgb(255, 98, 0);
-      border-radius: 10px;
+    .btns {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-      font-size: 20px;
-      font-weight: 500;
+      margin-top: 30px;
 
-      padding: 5px 20px;
+      .btn {
+        background-color: #fff;
+        border: 2px solid rgb(255, 98, 0);
+        border-radius: 10px;
 
-      cursor: pointer;
-      transition: all 0.2s linear;
+        font-size: 20px;
+        font-weight: 500;
 
-      &:focus,
-      &:hover {
-        outline: none;
-        background-color: rgb(255, 98, 0);
-        color: #fff;
+        padding: 5px 20px;
+
+        cursor: pointer;
+        transition: all 0.2s linear;
+
+        margin-bottom: 15px;
+
+        &:focus,
+        &:hover {
+          outline: none;
+          background-color: rgb(255, 98, 0);
+          color: #fff;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
       }
     }
   }
@@ -105,7 +141,28 @@
 </style>
 
 <script>
+import ErrorsList from "../components/ErrorsList.vue";
+
 export default {
   name: "EntryPage",
+
+  components: {
+    ErrorsList,
+  },
+
+  data() {
+    return {
+      errors: [],
+    };
+  },
+
+  methods: {
+    toRegPage() {
+      this.$router.push({ name: "reg" });
+    },
+    checkAuth() {
+      this.errors = [...this.errors, "Авторизация не доступна"];
+    },
+  },
 };
 </script>

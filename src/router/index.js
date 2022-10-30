@@ -5,6 +5,7 @@ import NotesPage from "../pages/NotesPage.vue";
 import WritePage from "../pages/WritePage.vue";
 import AuthView from "../views/AuthView.vue";
 import EntryPage from "../pages/EntryPage.vue";
+import RegPage from "../pages/RegPage.vue";
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
         path: "entry",
         name: "entry",
         component: EntryPage,
+      },
+      {
+        path: "reg",
+        name: "reg",
+        component: RegPage,
       },
     ],
   },
