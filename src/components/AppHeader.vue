@@ -4,7 +4,7 @@
       <h1>NoteBook</h1>
     </div>
     <div class="right">
-      <div class="email">atomychtrue@gmail.com</div>
+      <div class="email">{{ email }}</div>
       <button class="logout">
         <img
           src="../assets/icons/logout.png"
@@ -62,5 +62,12 @@
 <script>
 export default {
   name: "AppHeader",
+
+  props: {
+    email: {
+      type: String,
+      required: true,
+    },
+  },
 };
 </script>

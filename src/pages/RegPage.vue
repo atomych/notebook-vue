@@ -123,7 +123,7 @@
 </style>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 import { createUser } from "../firebase/auth";
 
 export default {
@@ -155,6 +155,7 @@ export default {
 
   methods: {
     ...mapActions(["regNewError"]),
+    ...mapMutations(["setValue"]),
 
     toEntryPage() {
       this.$router.push({ name: "entry" });
@@ -163,13 +164,17 @@ export default {
     regNewUser() {
       if (!this.isValidatedData) return;
 
+      this.$store.commit("setValue", true);
+
       createUser(this.email, this.pass)
         .then(() => {
           this.$router.push({ name: "entry" });
           this.$store.dispatch("regNewError", "Аккаунт успешно создан");
+          this.$store.commit("setValue", false);
         })
         .catch((err) => {
           this.$store.dispatch("regNewError", err.code);
+          this.$store.commit("setValue", false);
         });
 
       this.email = this.pass = this.pass2 = "";

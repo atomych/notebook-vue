@@ -33,13 +33,14 @@
     width: 50px;
     height: 50px;
 
-    border: 10px solid rgb(255, 98, 0);
-    border-left: none;
-    border-bottom: none;
+    border-top: 10px solid rgb(255, 98, 0);
+    border-left: 10px solid rgb(255, 98, 0);
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid transparent;
 
     border-radius: 50%;
 
-    animation: spinner 0.2s linear infinite;
+    animation: spinner 1s linear infinite;
   }
 }
 </style>

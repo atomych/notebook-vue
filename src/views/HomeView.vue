@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <header>
-      <app-header />
+      <app-header :email="userEmail" />
     </header>
     <main>
       <router-view />
@@ -30,6 +30,8 @@
 import AppHeader from "../components/AppHeader.vue";
 import AppFooter from "../components/AppFooter.vue";
 
+import { mapGetters } from "vuex";
+
 export default {
   name: "HomeView",
 
@@ -39,7 +41,15 @@ export default {
   },
 
   mounted() {
-    this.$router.push({ name: "empty" });
+    if (this.userNotes.length) {
+      this.$router.push({ name: "list" });
+    } else {
+      this.$router.push({ name: "empty" });
+    }
+  },
+
+  computed: {
+    ...mapGetters(["userId", "userEmail", "userNotes"]),
   },
 };
 </script>

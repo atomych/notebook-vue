@@ -1,16 +1,20 @@
 <template>
   <div class="wrapper">
     <div class="title">
-      <input type="text" placeholder="Напишите заголовок здесь..." />
+      <input
+        type="text"
+        placeholder="Напишите заголовок здесь..."
+        v-model="title"
+      />
     </div>
     <div class="text">
-      <textarea placeholder="Напишите текст здесь..."></textarea>
+      <textarea placeholder="Напишите текст здесь..." v-model="text"></textarea>
     </div>
     <div class="control-bar">
-      <button class="btn">Сохранить</button>
-      <button class="btn">Удалить</button>
-      <button class="btn">Очистить</button>
-      <button class="btn">Назад</button>
+      <button class="btn" @click="save()">Сохранить</button>
+      <button class="btn" @click="del()">Удалить</button>
+      <button class="btn" @click="clear()">Очистить</button>
+      <button class="btn" @click="back()">Назад</button>
     </div>
   </div>
 </template>
@@ -119,7 +123,50 @@
 </style>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from "vuex";
+
 export default {
   name: "WritePage",
+
+  data() {
+    return {
+      title: "",
+      text: "",
+    };
+  },
+
+  mounted() {
+    this.title = this.userCurrentNote.title;
+    this.text = this.userCurrentNote.text;
+  },
+
+  computed: {
+    ...mapGetters(["userCurrentNote"]),
+  },
+
+  methods: {
+    ...mapActions(["regNewError"]),
+    ...mapMutations(["setCurrentNote", "changeNote"]),
+
+    save() {
+      const params = {
+        title: this.title,
+        text: this.text,
+      };
+
+      this.$store.commit("changeNote", params);
+      this.back();
+      this.$store.dispatch("regNewError", "Заметка сохранена");
+    },
+    del() {},
+    clear() {
+      this.title = "";
+      this.text = "";
+    },
+    back() {
+      this.$store.commit("setCurrentNote", null);
+      this.$router.push({ name: "list" });
+    },
+  },
 };
 </script>

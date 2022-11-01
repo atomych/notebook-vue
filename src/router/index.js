@@ -54,4 +54,12 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  if (to.name == "home" && from.name != "entry") {
+    next("/auth/entry");
+  } else {
+    next();
+  }
+});
+
 export default router;

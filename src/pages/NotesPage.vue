@@ -15,17 +15,13 @@
       </div>
     </div>
     <ul class="list">
-      <li class="item">
-        <span class="title">To go on school</span>
-      </li>
-      <li class="item">
-        <span class="title">To go on school</span>
-      </li>
-      <li class="item">
-        <span class="title">To go on school</span>
-      </li>
-      <li class="item">
-        <span class="title">To go on school</span>
+      <li
+        class="item"
+        v-for="(note, idx) in userNotes"
+        :key="idx"
+        @click="selectNote(idx)"
+      >
+        <span class="title">{{ note.title }}</span>
       </li>
     </ul>
   </div>
@@ -114,3 +110,24 @@
   }
 }
 </style>
+
+<script>
+import { mapGetters, mapMutations } from "vuex";
+
+export default {
+  name: "NotesPage",
+
+  computed: {
+    ...mapGetters(["userNotes"]),
+  },
+
+  methods: {
+    ...mapMutations(["setCurrentNote"]),
+
+    selectNote(index) {
+      this.$store.commit("setCurrentNote", index);
+      this.$router.push({ name: "write" });
+    },
+  },
+};
+</script>

@@ -171,7 +171,7 @@ export default {
 
   methods: {
     ...mapActions(["regNewError"]),
-    ...mapMutations(["setValue"]),
+    ...mapMutations(["setValue", "setUserInfo"]),
 
     toRegPage() {
       this.$router.push({ name: "reg" });
@@ -183,12 +183,18 @@ export default {
 
       signIn(this.email, this.password)
         .then((userCredential) => {
-          console.log(userCredential);
+          const userInfo = {
+            uid: userCredential.user.uid,
+            email: userCredential.user.email,
+          };
+          this.$store.commit("setUserInfo", userInfo);
           this.$store.commit("setValue", false);
+          this.$store.dispatch("regNewError", "Вы зашли в свой аккаунт");
           this.$router.push({ name: "home" });
         })
         .catch((err) => {
           this.$store.dispatch("regNewError", err.code);
+          this.$store.commit("setValue", false);
         });
 
       this.email = this.password = "";
