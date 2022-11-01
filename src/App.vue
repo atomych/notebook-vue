@@ -1,5 +1,7 @@
 <template>
   <router-view />
+  <errors-list />
+  <app-spinner v-if="showSpinner" />
 </template>
 
 <style lang="scss">
@@ -24,9 +26,22 @@ body {
 </style>
 
 <script>
+import ErrorsList from "./components/ErrorsList.vue";
+import AppSpinner from "./components/AppSpinner.vue";
+import { mapGetters } from "vuex";
+
 export default {
+  components: {
+    ErrorsList,
+    AppSpinner,
+  },
+
   mounted() {
     this.$router.push({ name: "auth" });
+  },
+
+  computed: {
+    ...mapGetters(["showSpinner"]),
   },
 };
 </script>

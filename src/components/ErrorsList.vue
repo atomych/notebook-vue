@@ -1,10 +1,10 @@
 <template>
   <div class="list">
-    <div class="list__item" v-for="(item, idx) in list" :key="idx">
+    <div class="list__item" v-for="(item, idx) in getErrors" :key="idx">
       <div class="message">
         {{ item.text }}
       </div>
-      <button class="close" @click="remove(item)">
+      <button class="close" @click="remove(item.id)">
         <img
           src="../assets/icons/close.png"
           alt="close"
@@ -89,40 +89,20 @@
 </style>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
   name: "ErrorsList",
 
-  props: {
-    errors: {
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      list: [],
-    };
-  },
-
-  watch: {
-    errors() {
-      if (this.errors.length) {
-        const err = this.errors[this.errors.length - 1];
-        this.add(err);
-      }
-    },
+  computed: {
+    ...mapGetters(["getErrors"]),
   },
 
   methods: {
-    add(err) {
-      this.list.push({ text: err });
-      const ref = this.list[this.list.length - 1];
-      setTimeout(() => {
-        this.remove(ref);
-      }, 5000);
-    },
-    remove(ref) {
-      this.list = this.list.filter((el) => el != ref);
+    ...mapMutations(["removeErr"]),
+
+    remove(item) {
+      this.$store.commit("removeErr", item);
     },
   },
 };

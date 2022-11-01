@@ -39,7 +39,7 @@ export default {
   },
 
   mounted() {
-    this.$router.push({ name: "write" });
+    this.$router.push({ name: "empty" });
   },
 };
 </script>

@@ -3,15 +3,15 @@
     <form class="form" @keydown.enter.prevent="">
       <div class="form__item">
         <label for="email">Введите вашу почту:</label>
-        <input name="email" type="text" class="input" />
+        <input name="email" type="text" class="input" v-model="email" />
       </div>
       <div class="form__item">
         <label for="pass">Придумайте пароль:</label>
-        <input name="pass" type="password" class="input" />
+        <input name="pass" type="password" class="input" v-model="pass" />
       </div>
       <div class="form__item">
         <label for="pass2">Повторите пароль:</label>
-        <input name="pass2" type="password" class="input" />
+        <input name="pass2" type="password" class="input" v-model="pass2" />
       </div>
       <div class="btns">
         <input
@@ -30,8 +30,6 @@
         </button>
       </div>
     </form>
-
-    <errors-list :errors="errors" />
   </section>
 </template>
 
@@ -125,27 +123,56 @@
 </style>
 
 <script>
-import ErrorsList from "../components/ErrorsList.vue";
+import { mapActions } from "vuex";
+import { createUser } from "../firebase/auth";
 
 export default {
   name: "RegPage",
 
-  components: {
-    ErrorsList,
-  },
-
   data() {
     return {
-      errors: [],
+      email: "",
+      pass: "",
+      pass2: "",
     };
   },
 
+  computed: {
+    isValidatedData() {
+      if (this.pass.length >= 6 && this.pass == this.pass2) {
+        return true;
+      } else {
+        if (this.pass != this.pass2) {
+          this.$store.dispatch("regNewError", "Пароли не совпадают");
+        }
+        if (this.pass.length < 6) {
+          this.$store.dispatch("regNewError", "Минимальная длина пароля - 6");
+        }
+        return false;
+      }
+    },
+  },
+
   methods: {
+    ...mapActions(["regNewError"]),
+
     toEntryPage() {
       this.$router.push({ name: "entry" });
     },
+
     regNewUser() {
-      this.errors = [...this.errors, "Регистрация не доступна"];
+      if (!this.isValidatedData) return;
+
+      createUser(this.email, this.pass)
+        .then(() => {
+          this.$router.push({ name: "entry" });
+          this.$store.dispatch("regNewError", "Аккаунт успешно создан");
+        })
+        .catch((err) => {
+          this.$store.dispatch("regNewError", err.code);
+        });
+
+      this.email = this.pass = this.pass2 = "";
     },
   },
 };

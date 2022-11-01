@@ -6,7 +6,7 @@
     <form class="form" @keydown.enter.prevent="">
       <div class="form__item">
         <label for="email">Почта:</label>
-        <input name="email" type="email" class="input" />
+        <input name="email" type="email" class="input" v-model="email" />
       </div>
       <div class="form__item">
         <label for="pass">Пароль:</label>
@@ -15,6 +15,7 @@
           type="password"
           class="input"
           @keydown.enter.prevent="checkAuth()"
+          v-model="password"
         />
       </div>
       <div class="btns">
@@ -34,8 +35,6 @@
         </button>
       </div>
     </form>
-
-    <errors-list :errors="errors" />
   </section>
 </template>
 
@@ -141,27 +140,58 @@
 </style>
 
 <script>
-import ErrorsList from "../components/ErrorsList.vue";
+import { mapActions, mapMutations } from "vuex";
+import { signIn } from "../firebase/auth";
 
 export default {
   name: "EntryPage",
 
-  components: {
-    ErrorsList,
-  },
-
   data() {
     return {
-      errors: [],
+      email: "",
+      password: "",
     };
   },
 
+  computed: {
+    isValidatedData() {
+      if (this.email && this.password) {
+        return true;
+      } else {
+        if (this.email == "") {
+          this.$store.dispatch("regNewError", "Вы не ввели почту");
+        }
+        if (this.password == "") {
+          this.$store.dispatch("regNewError", "Вы не ввели пароль");
+        }
+        return false;
+      }
+    },
+  },
+
   methods: {
+    ...mapActions(["regNewError"]),
+    ...mapMutations(["setValue"]),
+
     toRegPage() {
       this.$router.push({ name: "reg" });
     },
     checkAuth() {
-      this.errors = [...this.errors, "Авторизация не доступна"];
+      if (!this.isValidatedData) return;
+
+      this.$store.commit("setValue", true);
+
+      signIn(this.email, this.password)
+        .then((userCredential) => {
+          console.log(userCredential);
+          this.$store.commit("setValue", false);
+          this.$router.push({ name: "home" });
+        })
+        .catch((err) => {
+          this.$store.dispatch("regNewError", err.code);
+        });
+
+      this.email = this.password = "";
     },
   },
 };
