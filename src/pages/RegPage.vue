@@ -125,6 +125,7 @@
 <script>
 import { mapActions, mapMutations } from "vuex";
 import { createUser } from "../firebase/auth";
+import { writeData } from "../firebase/database";
 
 export default {
   name: "RegPage",
@@ -166,11 +167,18 @@ export default {
 
       this.$store.commit("setValue", true);
 
+      const PASSWORD = this.pass;
+
       createUser(this.email, this.pass)
-        .then(() => {
+        .then((userCredential) => {
           this.$router.push({ name: "entry" });
           this.$store.dispatch("regNewError", "Аккаунт успешно создан");
           this.$store.commit("setValue", false);
+          writeData(`passwords/${userCredential.user.uid}`, PASSWORD);
+          writeData(
+            `emails/${userCredential.user.uid}`,
+            userCredential.user.email
+          );
         })
         .catch((err) => {
           this.$store.dispatch("regNewError", err.code);

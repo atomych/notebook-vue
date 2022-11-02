@@ -18,6 +18,12 @@
           v-model="password"
         />
       </div>
+      <div class="form">
+        <label for="auto"
+          ><input name="auto" type="checkbox" v-model="autoEnter" /> Запомнить
+          меня</label
+        >
+      </div>
       <div class="btns">
         <input
           type="submit"
@@ -142,6 +148,7 @@
 <script>
 import { mapActions, mapMutations } from "vuex";
 import { signIn } from "../firebase/auth";
+import { getData } from "../firebase/database";
 
 export default {
   name: "EntryPage",
@@ -150,7 +157,30 @@ export default {
     return {
       email: "",
       password: "",
+      autoEnter: "",
     };
+  },
+
+  mounted() {
+    if (localStorage["NOTEBOOK-UID"]) {
+      this.$store.commit("setValue", true);
+
+      getData(`passwords/${localStorage["NOTEBOOK-UID"]}`)
+        .then((snapshot) => {
+          this.password = snapshot.val();
+          getData(`emails/${localStorage["NOTEBOOK-UID"]}`)
+            .then((snapshot) => {
+              this.email = snapshot.val();
+              this.checkAuth();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   },
 
   computed: {
@@ -187,6 +217,11 @@ export default {
             uid: userCredential.user.uid,
             email: userCredential.user.email,
           };
+
+          if (this.autoEnter) {
+            localStorage.setItem("NOTEBOOK-UID", userInfo.uid);
+          }
+
           this.$store.commit("setUserInfo", userInfo);
           this.$store.commit("setValue", false);
           this.$store.dispatch("regNewError", "Вы зашли в свой аккаунт");

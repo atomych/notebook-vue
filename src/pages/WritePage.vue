@@ -141,31 +141,56 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["userCurrentNote"]),
+    ...mapGetters(["userCurrentNote", "userCurrentNoteIndex", "userNotes"]),
   },
 
   methods: {
-    ...mapActions(["regNewError"]),
-    ...mapMutations(["setCurrentNote", "changeNote"]),
+    ...mapActions(["regNewError", "changeUserNotes"]),
+    ...mapMutations(["setCurrentNote", "changeNote", "removeNote"]),
 
     save() {
+      if (this.title == "") {
+        this.$store.dispatch("regNewError", "Введите заголовок");
+        return;
+      }
+
       const params = {
         title: this.title,
         text: this.text,
       };
 
       this.$store.commit("changeNote", params);
+      this.$store.dispatch("changeUserNotes");
       this.back();
       this.$store.dispatch("regNewError", "Заметка сохранена");
     },
-    del() {},
+    del() {
+      this.$store.commit("removeNote", this.userCurrentNoteIndex);
+      this.$store.dispatch("regNewError", "Заметка удалена");
+      this.$store.commit("setCurrentNote", null);
+      this.$store.dispatch("changeUserNotes");
+
+      if (this.userNotes.length == 0) {
+        this.$router.push({ name: "empty" });
+      } else {
+        this.$router.push({ name: "list" });
+      }
+    },
     clear() {
       this.title = "";
       this.text = "";
     },
     back() {
+      if (this.title == "" && this.text == "") {
+        this.$store.commit("removeNote", this.userCurrentNoteIndex);
+      }
       this.$store.commit("setCurrentNote", null);
-      this.$router.push({ name: "list" });
+
+      if (this.userNotes.length == 0) {
+        this.$router.push({ name: "empty" });
+      } else {
+        this.$router.push({ name: "list" });
+      }
     },
   },
 };

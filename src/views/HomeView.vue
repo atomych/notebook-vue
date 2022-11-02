@@ -30,7 +30,8 @@
 import AppHeader from "../components/AppHeader.vue";
 import AppFooter from "../components/AppFooter.vue";
 
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
+import { getData } from "../firebase/database";
 
 export default {
   name: "HomeView",
@@ -41,15 +42,25 @@ export default {
   },
 
   mounted() {
-    if (this.userNotes.length) {
-      this.$router.push({ name: "list" });
-    } else {
-      this.$router.push({ name: "empty" });
-    }
+    getData(`notes/${this.userId}`).then((snapshot) => {
+      if (snapshot.val()) {
+        this.$store.commit("setUserNotes", snapshot.val());
+      }
+
+      if (this.userNotes.length) {
+        this.$router.push({ name: "list" });
+      } else {
+        this.$router.push({ name: "empty" });
+      }
+    });
   },
 
   computed: {
     ...mapGetters(["userId", "userEmail", "userNotes"]),
+  },
+
+  methods: {
+    ...mapMutations(["setUserNotes"]),
   },
 };
 </script>

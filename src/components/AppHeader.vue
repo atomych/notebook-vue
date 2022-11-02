@@ -5,7 +5,7 @@
     </div>
     <div class="right">
       <div class="email">{{ email }}</div>
-      <button class="logout">
+      <button class="logout" @click="logout()">
         <img
           src="../assets/icons/logout.png"
           alt="Найти"
@@ -67,6 +67,13 @@ export default {
     email: {
       type: String,
       required: true,
+    },
+  },
+
+  methods: {
+    logout() {
+      localStorage.removeItem("NOTEBOOK-UID");
+      this.$router.push({ name: "auth" });
     },
   },
 };

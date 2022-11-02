@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="text">Нет созданных заметок</div>
-    <button class="btn">Создать</button>
+    <button class="btn" @click="create()">Создать</button>
   </div>
 </template>
 
@@ -45,7 +45,25 @@
 </style>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
   name: "EmptyPage",
+
+  computed: {
+    ...mapGetters(["userNotes"]),
+  },
+
+  methods: {
+    ...mapMutations(["addNote", "setCurrentNote"]),
+
+    create() {
+      this.$store.commit("addNote");
+
+      const index = this.userNotes.length - 1;
+      this.$store.commit("setCurrentNote", index);
+      this.$router.push({ name: "write" });
+    },
+  },
 };
 </script>

@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <div class="control-bar">
-      <div class="search">
+      <button class="btn" @click="addNote()">Добавить заметку</button>
+      <!-- <div class="search">
         <input type="text" />
         <button>
           <img
@@ -12,7 +13,7 @@
             title="Найти"
           />
         </button>
-      </div>
+      </div> -->
     </div>
     <ul class="list">
       <li
@@ -59,9 +60,7 @@
       transition: all 0.2s linear;
 
       &:hover {
-        box-shadow: 0 0 5px #000;
-        background-color: rgb(255, 98, 0);
-        color: #fff;
+        box-shadow: 0 0 10px #000;
         border-color: rgb(255, 98, 0);
       }
 
@@ -76,37 +75,63 @@
     }
   }
 
-  .search {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
+  .control-bar {
     padding: 20px;
 
-    input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .btn {
+      margin-right: 30px;
+      padding: 5px 10px;
+
+      border: 2px solid rgb(255, 98, 0);
+      border-radius: 10px;
+      background-color: #fff;
+
       font-size: 20px;
       font-weight: 500;
-
-      border: 1px solid #000;
-      border-radius: 5px;
-
-      padding: 5px 10px;
-      margin-right: 5px;
-
-      width: 300px;
+      cursor: pointer;
       transition: all 0.2s linear;
 
-      &:focus {
-        outline: none;
-        box-shadow: 0 0 5px #000;
+      &:hover {
+        background-color: rgb(255, 98, 0);
+        color: #fff;
+        box-shadow: 0 0 10px #000;
       }
     }
 
-    button {
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-    }
+    // .search {
+    //   display: flex;
+    //   align-items: center;
+    //   justify-content: center;
+
+    //   input {
+    //     font-size: 20px;
+    //     font-weight: 500;
+
+    //     border: 1px solid #000;
+    //     border-radius: 5px;
+
+    //     padding: 5px 10px;
+    //     margin-right: 5px;
+
+    //     width: 300px;
+    //     transition: all 0.2s linear;
+
+    //     &:focus {
+    //       outline: none;
+    //       box-shadow: 0 0 5px #000;
+    //     }
+    //   }
+
+    //   button {
+    //     background-color: transparent;
+    //     border: none;
+    //     cursor: pointer;
+    //   }
+    // }
   }
 }
 </style>
@@ -122,11 +147,18 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["setCurrentNote"]),
+    ...mapMutations(["setCurrentNote", "addNote"]),
 
     selectNote(index) {
       this.$store.commit("setCurrentNote", index);
       this.$router.push({ name: "write" });
+    },
+
+    addNote() {
+      this.$store.commit("addNote");
+
+      const index = this.userNotes.length - 1;
+      this.selectNote(index);
     },
   },
 };
